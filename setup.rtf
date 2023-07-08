@@ -1,0 +1,57 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2709
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 Menlo-Regular;\f2\fmodern\fcharset0 Courier;
+\f3\fnil\fcharset0 Monaco;\f4\fnil\fcharset0 .SFNSMono-Light_YAXS140B3BC_wght1F40000;\f5\fnil\fcharset0 Menlo-Bold;
+}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red26\green26\blue26;\red255\green255\blue255;
+\red242\green239\blue236;\red0\green0\blue0;\red178\green186\blue203;\red28\green31\blue42;}
+{\*\expandedcolortbl;;\csgray\c0;\cssrgb\c13333\c13333\c13333;\cssrgb\c100000\c100000\c100000;
+\cssrgb\c96078\c94902\c94118;\cssrgb\c0\c0\c0;\cssrgb\c74902\c78039\c83529;\cssrgb\c14510\c16471\c21569;}
+\margl1440\margr1440\vieww29200\viewh18400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 https://brew.sh/\
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f1\fs32 \cf2 \CocoaLigature0 (echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> /Users/iegbunonu/.zprofile\
+eval "$(/opt/homebrew/bin/brew shellenv)"\
+\
+Brew install php\
+Brew install mysql\
+Brew service start php\
+Brew service start mysql\
+\
+Php -v\
+Mysql -V\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f2 \cf3 \cb4 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \outl0\strokewidth0 \strokec3 php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"\
+php -r "if (hash_file('sha384', 'composer-setup.php') === 'e21205b207c3ff031906575712edab6f13eb0b361f2085f1f1237b7126d785e826a450292b6cfd1d64d92e6563bbde02') \{ echo 'Installer verified'; \} else \{ echo 'Installer corrupt'; unlink('composer-setup.php'); \} echo PHP_EOL;"\
+php composer-setup.php\
+php -r "unlink('composer-setup.php');"\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f1 \cf2 \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 \outl0\strokewidth0 \
+\pard\pardeftab720\partightenfactor0
+
+\f3 \cf0 \cb5 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \outl0\strokewidth0 \strokec6 \shad\shadx0\shady-20\shadr0\shado255 \shadc0 sudo mv composer.phar /usr/local/bin/composer\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f4\fs25\fsmilli12800 \cf7 \cb8 \strokec7 \shad0 composer create-project laravel/laravel blog\
+\
+Php artisan serv
+\f3\fs32 \cf0 \cb5 \strokec6 \shad\shadx0\shady-20\shadr0\shado255 \shadc0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f1 \cf2 \cb1 \kerning1\expnd0\expndtw0 \CocoaLigature0 \outl0\strokewidth0 \shad0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
+
+\f5\b http://127.0.0.1:8000
+\f0\b0\fs24 \cf0 \CocoaLigature1 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \
+}
