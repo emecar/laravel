@@ -64,3 +64,7 @@ https://github.com/LearnWebCode/laravel-course
 login to mysql database
 ========================
 mysql -u root    // no password. If password - mysql -u root -p 
+
+php artisan migrate
+php artisan migrate:fresh   // drops every table and creates new. Only use with fresh setup/DB
+php artisan make:migration add_favorite_color_column
