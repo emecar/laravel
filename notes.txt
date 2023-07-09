@@ -60,3 +60,7 @@ looping through items in blade template
 web template
 =================
 https://github.com/LearnWebCode/laravel-course
+
+login to mysql database
+========================
+mysql -u root    // no password. If password - mysql -u root -p 
