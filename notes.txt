@@ -54,3 +54,7 @@ looping through items in blade template
             </li>
         @endforeach
     </ul>
+
+web template
+=================
+https://github.com/LearnWebCode/laravel-course
