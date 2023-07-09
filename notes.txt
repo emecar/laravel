@@ -9,6 +9,8 @@ https://getcomposer.org/download/
 (echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> /Users/iegbunonu/.zprofile
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
+brew search mysql
+
 Brew install php
 Brew install mysql
 Brew service start php
