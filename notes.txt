@@ -44,3 +44,13 @@ Views - resources/views
 Color highlighting for Blade syntax in vscode
 =====================================
 Install Laravel blade snippet by Winnie Lin
+
+looping through items in blade template
+=======================================
+<ul>
+        @foreach ($pets as $pet)
+            <li>
+                {{$pet}}
+            </li>
+        @endforeach
+    </ul>
