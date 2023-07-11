@@ -68,3 +68,47 @@ mysql -u root    // no password. If password - mysql -u root -p
 php artisan migrate
 php artisan migrate:fresh   // drops every table and creates new. Only use with fresh setup/DB
 php artisan make:migration add_favorite_color_column
+
+Creating the post database
+===========================
+
+php artisan make:migration create_posts_table
+//In the migration file created:
+public function up(): void
+    {
+        Schema::create('posts', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+            $table->String('title');
+            $table->longText('body');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+        });
+    }
+php artisan migrate
+// Note: In this case, it will assume that the foreign key references the id column in the users table (as the convention in Laravel is to // name the table as the plural form of the model name).
+
+php artisan make:model POST
+
+public function storeNewPost(Request $request){
+        $incomingFields = $request->validate([
+            'title' => 'required',
+            'body' => 'required'
+        ]);
+        $incomingFields['title'] = strip_tags($incomingFields['title']);
+        $incomingFields['body'] = strip_tags($incomingFields['title']);
+        $incomingFields['user_id'] = auth()->id();
+
+        Post::create($incomingFields);
+
+        return 'hey!!';
+    }
+Import the class model for post
+
+//edit the Post model and add the field to be written into the database
+
+class Post extends Model
+{
+    use HasFactory;
+    protected $fillable = ['title', 'body', 'user_id'];
+}
+
