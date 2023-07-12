@@ -1,0 +1,18 @@
+components/layout.blade.php
+===========================
+html header codes
+<!-- header ends here -->
+
+    {{$slot}}
+
+<!-- footer begins -->
+html footer codes
+
+homepage.blade.php
+===================
+
+<x-layout>
+
+  homepage body html code
+
+</x-layout>
