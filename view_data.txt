@@ -1,0 +1,36 @@
+route
+======
+
+<?php
+
+use App\Http\Controllers\ExampleController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/about', [ExampleController::class, 'about']);
+
+Controller
+==============
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+class ExampleController extends Controller
+{
+    public function about(){
+        $nameList = ['Julia', 'Brian', 'Vera'];
+        return view('myabout', ['MyName' => 'Innocent',  'NameList' => $nameList]);
+
+    }
+}
+
+View
+=============
+
+<body>
+    <h1>My name is {{$MyName}}</h1>
+    @foreach ($NameList as $item)
+    <h2>Welcome to my Colleague {{$item}}'s about page</h2>
+    @endforeach
+    
+</body>
