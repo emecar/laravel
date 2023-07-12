@@ -1,0 +1,23 @@
+//Check mysql version
+mysql -V
+
+//login to mysql database
+mysql -u root    // no password. If password - mysql -u root -p 
+
+//Create new database
+CREATE DATABASE blogapp;
+show databases;
+
+//Enable connection to database server
+//Go to .env file rows 11 - 16 and update the details 
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=blogapp   //This is the name of the database in mysql
+DB_USERNAME=root
+DB_PASSWORD=
+
+//Go to the database/migrations folder to view the pre-programmed migrations tables
+// Note, these default migrtation files have not been run so they have not yet been applied.
+
+php artisan migrate  //applies all  migration files not yet run
