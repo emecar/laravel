@@ -1,1 +1,66 @@
+//pre-requisite, install php namespace resolver in vscode
+
+//Edit HTML Form action and method
+<form action="/register" method="POST" id="registration-form">
+@csrf     //This includes a directive to add a hidden laravel token for security reasons.
+
+Create Controller for Users
+=============================
+
+php artisan make:controller UserController
+
+
+Routes file - web.php
+==========================
+use App\Http\Controllers\UserController;
+
+Route::post('/register', [UserController::class, 'register']);
+
+Basic Controller setup - UserController.php
+================================
+//go to the newly created User controller file and add the method  as follows:
+
+
+class UserController extends Controller
+{
+    public function register(){
+        return 'Hello from register function';
+    }
+}
+
+Add data to Database 
+=========================
+
+// Open the UserController filr
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;  //Import the User model
+use Illuminate\Http\Request;
+
+class UserController extends Controller
+{
+    public function register(Request $request){       //Receive the post data as $request
+        $incomingFields = $request->validate([        //Validate the incoming data and save validated fields in $incomingField
+            'username' => 'required',                //Ensures Username, passwprd and email are required
+            'password' => 'required',
+            'email' => 'required'
+
+        ]);
+        User::create($incomingFields);              // Creates the data in the database
+        return 'Hello from register function';      //optionally returns this value to clients screen
+    }
+}
+
+Edit User model
+=================
+//Go to the User Model and updated the protected $fillable section
+
+protected $fillable = [
+        'name',   //for example change from 'name' to 'username'
+        'email',
+        'password',
+    ];
+
 
