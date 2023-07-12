@@ -1,1 +1,63 @@
+Step 1: Edit controller
+======================
 
+<?php
+
+namespace App\Http\Controllers;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+
+class UserController extends Controller
+{
+    public function register(Request $request) {
+        $incomingFields = $request->validate([
+            'username' => ['required', 'min:3', 'max:20', Rule::unique('users', 'username')],
+            'email' => ['required', 'email', Rule::unique('users', 'email')],
+            'password' => ['required', 'min:8', 'confirmed']
+        ]);
+
+      //Optional  $incomingFields['password'] = bcrypt($incomingFields['password']);
+
+        User::create($incomingFields);
+        return 'Hello from register function';
+    }
+}
+
+
+
+
+Step 2: EDIT html
+==================
+
+          <div class="form-group">
+              <label for="username-register" class="text-muted mb-1"><small>Username</small></label>
+  // Edit      <input value="{{old('username')}}" name="username" id="username-register" class="form-control" type="text" placeholder="Pick a username" autocomplete="off" />
+ // Edit              @error('username')
+ // Edit              <p class="m-0 small alert alert-danger shadow-sm">{{$message}}</p>
+// Edit                @enderror
+            </div>
+//Note that the "{{old('email')}}" or "{{old('username')}}" makes the vlaue persistent
+            <div class="form-group">
+              <label for="email-register" class="text-muted mb-1"><small>Email</small></label>
+// Edit            <input value="{{old('email')}}" name="email" id="email-register" class="form-control" type="text" placeholder="you@example.com" autocomplete="off" />
+// Edit            @error('email')
+// Edit          <p class="m-0 small alert alert-danger shadow-sm">{{$message}}</p>
+// Edit            @enderror
+            </div>
+
+            <div class="form-group">
+              <label for="password-register" class="text-muted mb-1"><small>Password</small></label>
+              <input name="password" id="password-register" class="form-control" type="password" placeholder="Create a password" />
+              @error('password')
+              <p class="m-0 small alert alert-danger shadow-sm">{{$message}}</p>
+              @enderror
+            </div>
+
+            <div class="form-group">
+     // Edit            <label for="password-register-confirm" class="text-muted mb-1"><small>Confirm Password</small></label>
+    // Edit             <input name="password_confirmation" id="password-register-confirm" class="form-control" type="password" placeholder="Confirm password" />
+    // Edit             @error('password_confirmation')
+    // Edit             <p class="m-0 small alert alert-danger shadow-sm">{{$message}}</p>
+    // Edit             @enderror
+            </div>
