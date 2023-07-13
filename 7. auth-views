@@ -1,1 +1,73 @@
+Step 1" Modify view/Layout form action and include csrf token
+================================================================
+<form action="/login" method="POST" class="mb-0 pt-2 pt-md-0">
+          @csrf
+Step 2: Modify routes/web.php
+=================================
+Route::post('/login', [UserController::class, 'login']);
+
+Step 3: Create the method in User Controller
+==============================================
+ public function login(Request $request) {
+        $incomingFields = $request->validate([
+            'loginusername' => 'required',      //Note 'loginusername' is from the form input name 
+            'loginpassword' => 'required'
+        ]);
+        if (auth()->attempt(['username' => $incomingFields['loginusername'], 'password' => $incomingFields['loginpassword']])) {
+            $request->session()->regenerate(); //This generates a session token
+            return 'Congrats!!!';
+        } else {
+            return 'Sorry!!!';
+        }
+    }
+Step 4: Show conditional header (only) in view/layout for authenticated and non-authenticated users
+====================================================================================================
+ @auth    //Logged in users see only sign out 
+        <div class="flex-row my-3 my-md-0">
+          <a href="#" class="text-white mr-2 header-search-icon" title="Search" data-toggle="tooltip" data-placement="bottom"><i class="fas fa-search"></i></a>
+          <span class="text-white mr-2 header-chat-icon" title="Chat" data-toggle="tooltip" data-placement="bottom"><i class="fas fa-comment"></i></span>
+          <a href="#" class="mr-2"><img title="My Profile" data-toggle="tooltip" data-placement="bottom" style="width: 32px; height: 32px; border-radius: 16px" src="https://gravatar.com/avatar/f64fc44c03a8a7eb1d52502950879659?s=128" /></a>
+          <a class="btn btn-sm btn-success mr-2" href="#">Create Post</a>
+          <form action="#" method="POST" class="d-inline">
+            <button class="btn btn-sm btn-secondary">Sign Out</button>
+          </form>
+        </div>
+        @else  //non Logged in Users see the usernname/password prompt at the header
+        <form action="/login" method="POST" class="mb-0 pt-2 pt-md-0">
+          @csrf
+          <div class="row align-items-center">
+            <div class="col-md mr-0 pr-md-0 mb-3 mb-md-0">
+              <input name="loginusername" class="form-control form-control-sm input-dark" type="text" placeholder="Username" autocomplete="off" />
+            </div>
+            <div class="col-md mr-0 pr-md-0 mb-3 mb-md-0">
+              <input name="loginpassword" class="form-control form-control-sm input-dark" type="password" placeholder="Password" />
+            </div>
+            <div class="col-md-auto">
+              <button class="btn btn-primary btn-sm">Sign In</button>
+            </div>
+          </div>
+        </form>
+        @endauth
+Step 5 : Add controller method to display correct body on authentication
+=========================================================================
+public function showCorrectHomepage() {
+        if (auth()->check()) {
+            return view('homepage-feed');
+        } else {
+            return view('homepage');
+        }
+    }
+Step 6: Setup new layout for authenticated users view/homepage-feed.layout.blade.php to store the view for authenticated users
+===============================================================================================================================
+
+//Setup homepage-feed.layout.blade.php to store the view for authenticated users to store the view for authenticated users
+<x-layout>
+  <div class="container py-md-5 container--narrow">
+      <div class="text-center">
+        <h2>Hello <strong>{{auth()->user()->username}}</strong>, your feed is empty.</h2>  //Note that we automatically fetch the username in blade template
+        <p class="lead text-muted">Your feed displays the latest posts from the people you follow. If you don&rsquo;t have any friends to follow that&rsquo;s okay; you can use the &ldquo;Search&rdquo; feature in the top menu bar to find content written by people with similar interests and then follow them.</p>
+      </div>
+    </div>
+</x-layout>
+
 
