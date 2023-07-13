@@ -1,0 +1,4 @@
+Step 1: Edit form action for Sign-out
+======================================
+<form action="/logout" method="POST" class="d-inline">
+            @csrf
