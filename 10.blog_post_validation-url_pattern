@@ -72,7 +72,8 @@
         $incomingFields['body'] = strip_tags($incomingFields['body']);
         $incomingFields['user_id'] = auth()->id();
 
-        $newPost = Post::create($incomingFields);    ///Modify this part 
+        $newPost = Post::create($incomingFields);    ///Modify this part
+        //Make sure you remove Post::create($incomingFields);
 
         return redirect("/post/{$newPost->id}")->with('success', 'New post successfully created.');  ///Modify this Part
     }
