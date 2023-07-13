@@ -1,0 +1,18 @@
+//Validation
+=============
+
+1. Remove the 'required' field in the create-post field.
+2. To persist entered data, so that when there is an error, the old data still shows us the {{old('title')}} and{{old('body')}}:
+    <input value="{{old('title')}}" name="title" id="post-title" class="form-control form-control-lg form-control-title" type="text" placeholder="" autocomplete="off" />
+    <textarea name="body" id="post-body" class="body-content tall-textarea form-control" type="text">{{old('body')}}</textarea>
+3. setup error message to show field is required:
+      <input value="{{old('title')}}" name="title" id="post-title" class="form-control form-control-lg form-control-title" type="text" placeholder="" autocomplete="off" />
+          @error('title')
+          <p class="m-0 small alert alert-danger shadow-sm">{{$message}}</p>
+          @enderror
+
+    <textarea name="body" id="post-body" class="body-content tall-textarea form-control" type="text">{{old('body')}}</textarea>
+          @error('body')
+          <p class="m-0 small alert alert-danger shadow-sm">{{$message}}</p>
+          @enderror
+4. 
