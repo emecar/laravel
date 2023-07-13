@@ -1,1 +1,121 @@
+Step 1: Update HTML form in change # to the link
+        <div class="flex-row my-3 my-md-0">
+          <a class="btn btn-sm btn-success mr-2" href="/create-post">Create Post</a>
+
+Step 2: Create controller for post 
+
+  CLI: php artisan make:controller PostController
+
+
+Step 3: Add route
+use App\Http\Controllers\PostController;
+// Blog post related routes
+Route::get('/create-post', [PostController::class, 'showCreateForm']);
+
+
+Step 4: Update Post controller with new methods for displaying create-post web page view
+=======
+public function showCreateForm() {
+        return view('create-post');
+    }
+
+step 5: 
+========
+  // Create view/create-post.blade.php
+  // Modify the create-post.blade  form action to reflect the desired post link.
+  //Note that the form action in post/create-blade can still have the same url as the get/create-blade. Both have different http action.
+
+<x-layout>
+  <div class="container py-md-5 container--narrow">
+      <form action="/create-post" method="POST">
+        @csrf
+        <div class="form-group">
+          <label for="post-title" class="text-muted mb-1"><small>Title</small></label>
+          <input required name="title" id="post-title" class="form-control form-control-lg form-control-title" type="text" placeholder="" autocomplete="off" />
+        </div>
+
+        <div class="form-group">
+          <label for="post-body" class="text-muted mb-1"><small>Body Content</small></label>
+          <textarea required name="body" id="post-body" class="body-content tall-textarea form-control" type="text"></textarea>
+        </div>
+
+        <button class="btn btn-primary">Save New Post</button>
+      </form>
+    </div>
+</x-layout>
+
+Step 6 : Update  Routes
+==========
+Route::post('/create-post', [PostController::class, 'storeNewPost']);
+
+Step 7: Update Post Controller with method
+==========
+public function storeNewPost() {
+        return 'hey!!!';
+    }
+
+Step 8: Create Migration file for post database 
+================================================
+CLI: php artisan make:migration create_post_table
+
+Step 9: Modify the migration file:
+======
+
+public function up(): void
+    {
+        Schema::create('posts', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+            $table->string('title');
+            $table->longText('body');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+        });
+    }
+  public function down(): void
+    {
+        Schema::dropIfExists('posts');
+    }
+};
+
+Step 10: Run Migration to add the 'posts' table
+========
+CLI:  php artisan migrate
+
+Step 11 : Modify Post controller
+========
+public function storeNewPost(Request $request) {
+        $incomingFields = $request->validate([
+            'title' => 'required',
+            'body' => 'required'
+        ]);
+
+        $incomingFields['title'] = strip_tags($incomingFields['title']);
+        $incomingFields['body'] = strip_tags($incomingFields['body']);
+        $incomingFields['user_id'] = auth()->id();
+
+        Post::create($incomingFields);
+
+        return 'hey!!!';
+    }
+
+Step 12: Create new Model for posts 
+=========
+CLI: php artisan make:model Post
+use App\Models\Post;
+Post::create($incomingFields);
+
+Step 13: Modify Post model:
+===========================
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Post extends Model
+{
+    use HasFactory;
+    protected $fillable = ['title', 'body', 'user_id'];
+}
 
