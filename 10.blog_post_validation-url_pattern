@@ -15,4 +15,11 @@
           @error('body')
           <p class="m-0 small alert alert-danger shadow-sm">{{$message}}</p>
           @enderror
-4. 
+4. Redirect User to the new URL for the new Post. e.g. /post/id
+
+//Add route
+        Route::get('/post/{post}', [PostController::class, 'viewSinglePost']);
+//Add Method to controller
+         public function viewSinglePost(Post $post) {
+        return view('single-post', ['post' => $post]);
+    }
