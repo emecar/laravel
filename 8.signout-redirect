@@ -29,3 +29,28 @@ public function login(Request $request) {
             return redirect('/')->with('failure', 'Invalid login.');
         }
     }
+Step 5: Display the flash message
+===================================
+// Modify the blade view layout 
+
+<!-- header ends here -->
+
+    @if (session()->has('success'))
+    <div class="container container--narrow">
+      <div class="alert alert-success text-center">
+        {{session('success')}}
+      </div>
+    </div>
+    @endif
+
+    @if (session()->has('failure'))
+    <div class="container container--narrow">
+      <div class="alert alert-danger text-center">
+        {{session('failure')}}
+      </div>
+    </div>
+    @endif
+
+    {{$slot}}
+
+    <!-- footer begins -->
