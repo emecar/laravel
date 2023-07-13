@@ -22,7 +22,9 @@ Step 3: Create the method in User Controller
     }
 Step 4: Show conditional header (only) in view/layout for authenticated and non-authenticated users
 ====================================================================================================
- @auth    //Logged in users see only sign out 
+////// - Add this before the form begins
+
+@auth    //Logged in users see only sign out 
         <div class="flex-row my-3 my-md-0">
           <a href="#" class="text-white mr-2 header-search-icon" title="Search" data-toggle="tooltip" data-placement="bottom"><i class="fas fa-search"></i></a>
           <span class="text-white mr-2 header-chat-icon" title="Chat" data-toggle="tooltip" data-placement="bottom"><i class="fas fa-comment"></i></span>
@@ -32,6 +34,7 @@ Step 4: Show conditional header (only) in view/layout for authenticated and non-
             <button class="btn btn-sm btn-secondary">Sign Out</button>
           </form>
         </div>
+//////////////////////////////////////////////This Part remains the same from step 1 /////////////////////////////
         @else  //non Logged in Users see the usernname/password prompt at the header
         <form action="/login" method="POST" class="mb-0 pt-2 pt-md-0">
           @csrf
