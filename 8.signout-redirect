@@ -2,3 +2,13 @@ Step 1: Edit form action for Sign-out
 ======================================
 <form action="/logout" method="POST" class="d-inline">
             @csrf
+Step 2: Add route
+=================
+Route::post('/logout', [UserController::class, 'logout']);
+
+Step 3: Add Controller Method for this route
+===================
+ public function logout() {
+        auth()->logout();
+        return redirect('/')->with('success', 'You are now logged out.');
+    }
