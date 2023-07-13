@@ -79,7 +79,7 @@ public function up(): void
 
 Step 10: Run Migration to add the 'posts' table
 ========
-CLI:  php artisan migrate
+CLI:  php artisan migrate --path=database/migrations/2023_07_13_143453_create_posts_table.php  //Note: Replace migration file name
 
 Step 11 : Modify Post controller
 ========
