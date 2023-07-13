@@ -101,7 +101,7 @@ public function storeNewPost(Request $request) {
 Step 12: Create new Model for posts 
 =========
 CLI: php artisan make:model Post
-use App\Models\Post;
+use App\Models\Post;  // Make sure you import the Post model
 Post::create($incomingFields);
 
 Step 13: Modify Post model:
