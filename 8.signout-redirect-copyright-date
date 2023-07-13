@@ -72,3 +72,8 @@ public function register(Request $request) {
         return redirect('/')->with('success', 'Thank you for creating an account.'); // Return a success message to the user
     }
 
+Step 7: Make the copyright date at the footer dynamic
+=======================================================
+<footer class="border-top text-center small text-muted py-3">
+      <p class="m-0">Copyright &copy; {{date('Y')}} <a href="/" class="text-muted">OurApp</a>. All rights reserved.</p>
+    </footer>
