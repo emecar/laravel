@@ -1,4 +1,5 @@
 // To prevent no authenticated users from access the /create-post blogs.
+// Middleware prevents the request from getting to the controller.
 Option 1: Controller function 
 ========
  public function showCreateForm() {
