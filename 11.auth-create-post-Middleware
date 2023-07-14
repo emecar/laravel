@@ -1,0 +1,39 @@
+// To prevent no authenticated users from access the /create-post blogs.
+Option 1: Controller function 
+========
+ public function showCreateForm() {
+        if (!auth()->check()){
+        return redirect('/');
+    }
+        return view('create-post');
+    }
+}
+Option 2: Route file using Middleware
+=====================================
+1. CLI: php artisan make:middleware MustBeLoggedIn
+
+2. Update Kernel.php with new middleware alias as follows:
+
+    protected $middlewareAliases = [
+        'mustBeLoggedIn' => \App\Http\Middleware\MustBeLoggedIn::class,
+
+2. Modify Middleware - MustBeLoggedIn as follows:
+
+ public function handle(Request $request, Closure $next): Response
+    {
+        if (auth()->check()) {
+            return $next($request);
+        }
+        return redirect('/')->with('failure', 'You must be logged in.');
+    }
+
+3. Modify Routes
+
+    Route::get('/', [UserController::class, "showCorrectHomepage"])->name('login');
+    Route::post('/register', [UserController::class, 'register'])->middleware('guest');
+    Route::post('/login', [UserController::class, 'login'])->middleware('guest');
+    Route::post('/logout', [UserController::class, 'logout'])->middleware('mustBeLoggedIn');
+  
+    Route::get('/create-post', [PostController::class, 'showCreateForm'])->middleware('mustBeLoggedIn');
+    Route::post('/create-post', [PostController::class, 'storeNewPost'])->middleware('mustBeLoggedIn');
+    Route::get('/post/{post}', [PostController::class, 'viewSinglePost']);
