@@ -30,7 +30,9 @@ Option 2: Route file using Middleware
 
 3. Modify Routes
 
-    Route::get('/', [UserController::class, "showCorrectHomepage"])->name('login');
+//Note: we could use the 'auth' middleware to achieve same thing as the new 'mustBeLoggedIn' middleware.
+
+    Route::get('/', [UserController::class, "showCorrectHomepage"])->name('login');  // This name('login') is an alias name for theis route which is referenced by the middleware for redirecting to login page.
     Route::post('/register', [UserController::class, 'register'])->middleware('guest');
     Route::post('/login', [UserController::class, 'login'])->middleware('guest');
     Route::post('/logout', [UserController::class, 'logout'])->middleware('mustBeLoggedIn');
