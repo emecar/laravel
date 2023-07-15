@@ -51,8 +51,8 @@ Step 4: Modify the page where the update/delete buttons appear to conditionally 
         @endcan
       </div>
 
-Requirement 2: The act of Deleting a Post
-============================================================
+Requirement 2: The act of Deleting a Post (using controller method)
+===================================================================
 Step 1: Go to Post Routes
         Route::delete('/post/{post}', [PostController::class, 'delete']);
 
