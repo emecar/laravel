@@ -1,1 +1,44 @@
+1. 5. Edit the link for single-Post.blade.php
+ <a href="/post/{{$post->id}}/edit" class="text-primary mr-2" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fas fa-edit"></i></a>
 
+2. Setup a view template(edit-post.blade.php) for edit (mirror from create-post.php)
+
+3. Modify the 'Save new Post' and change to 'Save Changes'
+    <button class="btn btn-primary">Save Changes</button>
+
+4. Modify the input value to prepopulate with the old title value and the old body values from the database:
+
+    <input value="{{old('title', $post->title)}}" name="title" id="post-title" class="form-control form-control-lg form-control-title" type="text" placeholder="" autocomplete="off" />
+    <textarea name="body" id="post-body" class="body-content tall-textarea form-control" type="text">{{old('body', $post->body)}}</textarea>
+
+// value="{{old('title', $post->title)}}" means that if there is no old value (title) then use a default value of $post->title
+
+5. Update the Form action on edit-post.blade.php
+    
+    <form action="/post/{{$post->id}}" method="POST">
+    @csrf
+    @method('PUT')
+6. Update Routes:
+
+    Route::get('/post/{post}/edit', [PostController::class, 'showEditForm'])->middleware('can:update,post');
+    Route::put('/post/{post}', [PostController::class, 'actuallyUpdate'])->middleware('can:update,post');
+
+7. Update Controller:
+
+  public function actuallyUpdate(Post $post, Request $request) {
+        $incomingFields = $request->validate([
+            'title' => 'required',
+            'body' => 'required'
+        ]);
+
+        $incomingFields['title'] = strip_tags($incomingFields['title']);
+        $incomingFields['body'] = strip_tags($incomingFields['body']);
+
+        $post->update($incomingFields);
+
+        return back()->with('success', 'Post successfully updated.');
+    }
+
+    public function showEditForm(Post $post) {
+        return view('edit-post', ['post' => $post]);
+    }
