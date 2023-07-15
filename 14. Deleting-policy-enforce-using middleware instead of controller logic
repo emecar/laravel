@@ -1,1 +1,10 @@
-
+Step 1" Edit Existing controller function and remove any policy checks
+============
+      public function delete(Post $post) {
+        
+                $post->delete();
+                return redirect('/profile/' . auth()->user()->username)->with('success', 'Post successfully deleted.');
+            }
+Edit route file to add a middleware for authentication:
+=========
+Route::delete('/post/{post}', [PostController::class, 'delete'])->middleware('can:delete,post');
