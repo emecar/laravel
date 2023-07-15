@@ -1,1 +1,42 @@
+1. Add new column to the user database to mark users with admin access
 
+CLI: php artisan make:migration add_isadmin_to_users_table --table=users
+Go to the new migration file:
+
+       public function up(): void
+          {
+              Schema::table('users', function (Blueprint $table) {
+                  $table->boolean('isAdmin')->default(0);
+              });
+          }
+      
+          /**
+           * Reverse the migrations.
+           */
+          public function down(): void
+          {
+              Schema::table('users', function (Blueprint $table) {
+                  $table->dropColumn('isAdmin');
+              });
+          }
+
+php artisan migrate migrationfilename
+
+Modify and apply changes for a user  on sql workbench tp promote them to an admin.
+
+Go to post policy file
+
+public function update(User $user, Post $post): bool
+    {
+        if ($user->isAdmin === 1) {
+            return true;
+        }
+        return $user->id === $post->user_id;
+    }
+
+{
+        if ($user->isAdmin === 1) {
+            return true;
+        }
+        return $user->id === $post->user_id;
+    }
