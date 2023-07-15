@@ -1,1 +1,27 @@
+Requirements
+============
+1. Able to view update and delete icon on a blog only if you are logged in/authenticated as the same user who created the blog.
+2. Be able to update and delete Posts.
+
+Method 1 to fix Req 1.
+======
+Route::get('/post/{post}', [PostController::class, 'viewSinglePost']);
+
+Controller function
+---
+public function viewSinglePost(Post $post) {
+        if ($post->user_id === auth()->user()->id
+        return "You are the author"
+    }
+        return "you are not the author";
+
+// The shortfall of this method is that we will have to do it in multiple places in our application.
+
+Method 2: Use Policies
+===============
+
+Step 1: Create Policy
+CLI: php artisan make:policy
+
+
 
