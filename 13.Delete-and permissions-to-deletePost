@@ -1,7 +1,7 @@
 Requirements
 ============
 1. Able to view update and delete icon on a blog only if you are logged in/authenticated as the same user who created the blog.
-2. Be able to update and delete Posts.
+2. Update and delete Posts.
 
 Method 1 to fix Req 1.
 ======
@@ -17,11 +17,85 @@ public function viewSinglePost(Post $post) {
 
 // The shortfall of this method is that we will have to do it in multiple places in our application.
 
-Method 2: Use Policies
+Method 2 to fix Req 1: Use Policies
 ===============
 
 Step 1: Create Policy
-CLI: php artisan make:policy
+CLI: php artisan make:policy PostPolicy --model=Post   // --model=Post adds more boiler plate config tying it to the Post Model.
+Step 2: Go to app>Policies>PostPolicies
+        public function update(User $user, Post $post): bool
+        {
+                return $user->id === $post->user_id;
+        }
 
+        public function delete(User $user, Post $post): bool
+        {
+                return $user->id === $post->user_id;
+        }
+Step 3: Register new Policy with Laravel
+Go to app/Providers/AuthServiceProvider.php
 
+protected $policies = [
+        Post::class => PostPolicy::class
+    ];
+Step 4: Modify the page where the update/delete buttons appear to conditionally appear for user where the auth $user->id matches the $post->user_id
+        <div class="d-flex justify-content-between">
+        <h2>{{$post->title}}</h2>
+        @can('update', $post)
+        <span class="pt-2">
+          <a href="#" class="text-primary mr-2" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fas fa-edit"></i></a>
+          <form class="delete-post-form d-inline" action=# method="POST">
+            <button class="delete-post-button text-danger" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fas fa-trash"></i></button>
+          </form>
+        </span>
+        @endcan
+      </div>
 
+Requirement 2: The act of Deleting a Post
+============================================================
+Step 1: Go to Post Routes
+        Route::delete('/post/{post}', [PostController::class, 'delete']);
+
+Step 2: Go to Post Controller and create a delete function
+
+         public function delete(Post $post) {
+                if (auth()->user()->cannot('delete', $post)) {
+                    return 'You cannot do that';
+                }
+                $post->delete();
+                return redirect('/profile/' . auth()->user()->username)->with('success', 'Post successfully deleted.');
+            }
+
+Step 3: update view/single-post with correct url for delete icon
+
+        <div class="container py-md-5 container--narrow">
+        !<--output deleted -->
+         <form class="delete-post-form d-inline" action="/post/{{$post->id}}" method="POST">
+         @csrf
+         @method('DELETE')
+        !<--output deleted -->
+         </div>
+
+the full html code for single-post.blade.php is shown below:
+
+        <div class="container py-md-5 container--narrow">
+      <div class="d-flex justify-content-between">
+        <h2>{{$post->title}}</h2>
+        @can('update', $post)
+        <span class="pt-2">
+          <a href="#" class="text-primary mr-2" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fas fa-edit"></i></a>
+          <form class="delete-post-form d-inline" action="/post/{{$post->id}}" method="POST">
+            @csrf
+            @method('DELETE')
+            <button class="delete-post-button text-danger" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fas fa-trash"></i></button>
+          </form>
+        </span>
+        @endcan
+      </div>
+        
+Step 4: Test Delete
+        //Go to the post you want to delete
+        //Inspect the delete button
+        //change the id to another belong to some other user
+        //click on delete
+       // it shuld return -> 'You cannot do that'
