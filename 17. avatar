@@ -68,7 +68,7 @@ public function storeAvatar(Request $request) {
 
         $filename = $user->id . '-' . uniqid() . '.jpg';
 
-        $imgData = Image::make($request->file('avatar'))->fit(120)->encode('jpg'); // This modifies the size of the file to 12o pixels
+        $imgData = Image::make($request->file('avatar'))->fit(120)->encode('jpg'); // This modifies the size of the file to 120 pixels
         Storage::put('public/avatars/' . $filename, $imgData);    //Note, this stores the file in the local server
     }
 9. Store Avatar in database
