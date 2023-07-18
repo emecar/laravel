@@ -33,7 +33,8 @@
           </div>
         </x-layout>
 
-5. CLI : php artisan storage: link
+5. CLI : php artisan storage:link   //this creates a shortcut for the 'storage' folder on 
+public'
 
 6. Update php.ini to enable file upload greater than 2MB
       - command + shift + p  -> Install path
@@ -46,7 +47,7 @@
         Route::get('/manage-avatar', [UserController::class, 'showAvatarForm'])->middleware('mustBeLoggedIn');
         Route::post('/manage-avatar', [UserController::class, 'storeAvatar'])->middleware('mustBeLoggedIn');
 
-8.  Modify Image vefore storing it
+8.  Modify Image before storing it
 =====================
 CLI: composer require intervention/image
 //User Controller
