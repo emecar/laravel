@@ -1,0 +1,133 @@
+1. Go profile-post.blade.php file
+    <div class="container py-md-5 container--narrow">
+          <h2>
+           <!output ommitted..>
+              @if(auth()->user()->username == $username)
+              <a href="/manage-avatar" class="btn btn-secondary btn-sm">Manage Avatar</a>
+              @endif
+            </form>
+
+2. // User related routes
+          Route::get('/manage-avatar', [UserController::class, 'showAvatarForm']);
+
+3.  Go to the UserController
+
+      public function storeAvatar(Request $request) {
+              $request->file('avatar')->store('public/avatars');
+              return 'hey';
+          }
+4. Creat avater-form.blade.php
+            <x-layout>
+          <div class="container container--narrow py-md-5">
+            <h2 class="text-center mb-3">Upload a New Avatar</h2>
+            <form action="/manage-avatar" method="POST" enctype="multipart/form-data">
+              @csrf
+              <div class="mb-3">
+                <input type="file" name="avatar" required>
+                @error('avatar')
+                <p class="alert small alert-danger shadow-sm">{{$message}}</p>
+                @enderror
+              </div>
+              <button class="btn btn-primary">Save</button>
+            </form>
+          </div>
+        </x-layout>
+
+5. CLI : php artisan storage: link
+
+6. Update php.ini to enable file upload greater than 2MB
+      - command + shift + p  -> Install path
+      - code /opt/homebrew/etc/php/10.x/php.ini   //note your php version might differ. ensure to update it
+      - search for 'upload_max_filesize' and update it to say 8M
+      - restart the laravel server
+
+7. protect routes so only logged in users can access them:
+    // User related routes
+        Route::get('/manage-avatar', [UserController::class, 'showAvatarForm'])->middleware('mustBeLoggedIn');
+        Route::post('/manage-avatar', [UserController::class, 'storeAvatar'])->middleware('mustBeLoggedIn');
+
+8.  Modify Image vefore storing it
+=====================
+CLI: composer require intervention/image
+//User Controller
+use Intervention\Image\Facades\Image;  // Import class Image
+use Illuminate\Support\Facades\Storage; // Import Storage
+
+public function storeAvatar(Request $request) {
+        $request->validate([
+            'avatar' => 'required|image|max:3000'
+        ]);
+
+        $user = auth()->user();
+
+        $filename = $user->id . '-' . uniqid() . '.jpg';
+
+        $imgData = Image::make($request->file('avatar'))->fit(120)->encode('jpg'); // This modifies the size of the file to 12o pixels
+        Storage::put('public/avatars/' . $filename, $imgData);    //Note, this stores the file in the local server
+    }
+9. Store Avatar in database
+=============
+User controller
+--
+     public function storeAvatar(Request $request) {
+        $request->validate([
+            'avatar' => 'required|image|max:3000'
+        ]);
+
+        $user = auth()->user();
+
+        $filename = $user->id . '-' . uniqid() . '.jpg';
+
+        $imgData = Image::make($request->file('avatar'))->fit(120)->encode('jpg');
+        Storage::put('public/avatars/' . $filename, $imgData);
+
+        $oldAvatar = $user->avatar;
+
+        $user->avatar = $filename;
+        $user->save();
+        // This ensures only the current user file is being downloaded. It checks if the user has a non-default avatar and then replaces the '/storage/' in the file path with 'public/'.
+        if ($oldAvatar != "/fallback-avatar.jpg") {
+            Storage::delete(str_replace("/storage/", "public/", $oldAvatar));
+        }
+
+        return back()->with('success', 'Congrats on the new avatar.');
+    }
+
+Layout.blade.php
+--
+
+   <a href="/profile/{{auth()->user()->username}}" class="mr-2"><img title="My Profile" data-toggle="tooltip" data-placement="bottom" style="width: 32px; height: 32px; border-radius: 16px" src="{{auth()->user()->avatar}}" /></a>
+
+User Model - user.php (Using an accessor)
+--
+
+            // use Illuminate\Contracts\Auth\MustVerifyEmail;
+        use Laravel\Sanctum\HasApiTokens;
+        use Illuminate\Notifications\Notifiable;
+        use Illuminate\Database\Eloquent\Casts\Attribute;
+        use Illuminate\Database\Eloquent\Factories\HasFactory;
+        use Illuminate\Foundation\Auth\User as Authenticatable;
+        
+        class User extends Authenticatable
+        {
+            protected function avatar(): Attribute {
+                return Attribute::make(get: function($value) {
+                    return $value ? '/storage/avatars/' . $value : '/fallback-avatar.jpg';
+                });
+            }
+
+Update the app/public folder
+    - Place fall-back-avatar.jpg into the public app/public folder
+
+Update single=post.blade.php
+    -  <a href="#"><img class="avatar-tiny" src="{{$post->user->avatar}}" /></a>
+
+Update profile screen
+  User controller > profile function
+     public function profile(User $user) {
+        return view('profile-posts', ['avatar' => $user->avatar, 'username' => $user->username, 'posts' => $user->posts()->latest()->get(), 'postCount' => $user->posts()->count()]);
+    }
+
+profile-post.php
+   <img class="avatar-small" src="{{$avatar}}" /> {{$username}}
+   <img class="avatar-tiny" src="{{$post->user->avatar}}" />
