@@ -49,7 +49,7 @@ Step 6: create and Modify Controller
         if ($existCheck) {
             return back()->with('failure', 'You are already following that user.');
         }
-        // The code below is an alternate way to create a record in the database. same as Follow::create();
+        // The code below is an alternate way to create a record in the database. same as Follow::create(); then going to the model to edit the fillables.
         $newFollow = new Follow;
         $newFollow->user_id = auth()->user()->id;
         $newFollow->followeduser = $user->id;
@@ -62,3 +62,11 @@ Step 6: create and Modify Controller
 
     }
             
+Step 7: Profile post.pst.php (line 5)
+
+            <x-layout>
+                    <form class="ml-2 d-inline" action="/create-follow/{{$username}}" method="POST">
+                      @csrf
+            </x-layout>
+
+Step 8: Test
