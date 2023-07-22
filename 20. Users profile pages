@@ -1,1 +1,119 @@
+Objective
+=========
+make the followers ad following count come to llife
+Make the posts, followers and following pages look identical without duplication
 
+step 1: create new file in component folder - views/components/profile.blade.php. Copy this from profile-posts.php
+
+        <x-layout>
+          <div class="container py-md-5 container--narrow">
+              <h2>
+                <img class="avatar-small" src="{{$sharedData['avatar']}}" /> {{$sharedData['username']}}
+                @auth
+                @if(!$sharedData['currentlyFollowing'] AND auth()->user()->username != $sharedData['username'])
+                <form class="ml-2 d-inline" action="/create-follow/{{$sharedData['username']}}" method="POST">
+                  @csrf
+                  <button class="btn btn-primary btn-sm">Follow <i class="fas fa-user-plus"></i></button>
+                </form>
+                @endif
+        
+                @if($sharedData['currentlyFollowing'])
+                <form class="ml-2 d-inline" action="/remove-follow/{{$sharedData['username']}}" method="POST">
+                  @csrf          
+                  <button class="btn btn-danger btn-sm">Stop Following <i class="fas fa-user-times"></i></button>
+                </form>
+                @endif
+        
+                @if(auth()->user()->username == $sharedData['username'])
+                  <a href="/manage-avatar" class="btn btn-secondary btn-sm">Manage Avatar</a>
+                  @endif
+                @endauth
+              </h2>
+        
+              <div class="profile-nav nav nav-tabs pt-2 mb-4">
+                <a href="/profile/{{$sharedData['username']}}" class="profile-nav-link nav-item nav-link {{ Request::segment(3) == "" ? "active" : "" }}">Posts: {{$sharedData['postCount']}}</a>
+                <a href="/profile/{{$sharedData['username']}}/followers" class="profile-nav-link nav-item nav-link {{ Request::segment(3) == "followers" ? "active" : "" }}">Followers: 3</a>
+                <a href="/profile/{{$sharedData['username']}}/following" class="profile-nav-link nav-item nav-link {{ Request::segment(3) == "following" ? "active" : "" }}">Following: 2</a>
+              </div>
+        
+              <div class="profile-slot-content">
+                {{$slot}}
+              </div>
+        
+            </div>
+        </x-layout>
+
+Step 2: Go to profile-post.blade
+
+    <x-profile :sharedData="$sharedData">
+      <div class="list-group">
+            @foreach($posts as $post)
+            <a href="/post/{{$post->id}}" class="list-group-item list-group-item-action">
+              <img class="avatar-tiny" src="{{$post->user->avatar}}" />
+              <strong>{{$post->title}}</strong> on {{$post->created_at->format('n/j/Y')}}
+            </a>
+            @endforeach
+          </div>
+    </x-profile>
+
+Step 3: Add Routes
+    Route::get('/profile/{user:username}/followers', [UserController::class, 'profileFollowers']);
+    Route::get('/profile/{user:username}/following', [UserController::class, 'profileFollowing']);
+
+Step 4: Modify UserController
+     private function getSharedData($user) {
+        $currentlyFollowing = 0;
+
+        if (auth()->check()) {
+            $currentlyFollowing = Follow::where([['user_id', '=', auth()->user()->id], ['followeduser', '=', $user->id]])->count();
+        }
+
+        View::share('sharedData', ['currentlyFollowing' => $currentlyFollowing, 'avatar' => $user->avatar, 'username' => $user->username, 'postCount' => $user->posts()->count()]);
+    }
+
+    public function profile(User $user) {
+        $this->getSharedData($user);
+        return view('profile-posts', ['posts' => $user->posts()->latest()->get()]);
+    }
+
+    public function profileFollowers(User $user) {
+        $this->getSharedData($user);
+        return view('profile-followers', ['posts' => $user->posts()->latest()->get()]);
+    }
+
+    public function profileFollowing(User $user) {
+        $this->getSharedData($user);
+        return view('profile-following', ['posts' => $user->posts()->latest()->get()]);
+    }
+Step 6: Create view/profile-followers.blade.php
+
+        <x-profile :sharedData="$sharedData">
+          <div class="list-group">
+                @foreach($posts as $post)
+                <a href="/post/{{$post->id}}" class="list-group-item list-group-item-action">
+                  <img class="avatar-tiny" src="{{$post->user->avatar}}" />
+                  <strong>{{$post->title}}</strong> on {{$post->created_at->format('n/j/Y')}}
+                </a>
+                @endforeach
+              </div>
+        </x-profile>
+
+Step 7:  Create view/profile-following.blade.php
+
+      <x-profile :sharedData="$sharedData">
+        <div class="list-group">
+              @foreach($posts as $post)
+              <a href="/post/{{$post->id}}" class="list-group-item list-group-item-action">
+                <img class="avatar-tiny" src="{{$post->user->avatar}}" />
+                <strong>{{$post->title}}</strong> on {{$post->created_at->format('n/j/Y')}}
+              </a>
+              @endforeach
+            </div>
+      </x-profile>
+Step 8: Adjust href for followers and followings
+
+      <div class="profile-nav nav nav-tabs pt-2 mb-4">
+          <a href="/profile/{{$sharedData['username']}}" class="profile-nav-link nav-item nav-link {{ Request::segment(3) == "" ? "active" : "" }}">Posts: {{$sharedData['postCount']}}</a>
+          <a href="/profile/{{$sharedData['username']}}/followers" class="profile-nav-link nav-item nav-link {{ Request::segment(3) == "followers" ? "active" : "" }}">Followers: 3</a>
+          <a href="/profile/{{$sharedData['username']}}/following" class="profile-nav-link nav-item nav-link {{ Request::segment(3) == "following" ? "active" : "" }}">Following: 2</a>
+      </div>
