@@ -1,20 +1,64 @@
-CLI:  php artisan make:migration create_follows_table
+step 1: CLI:  php artisan make:migration create_follows_table
 
-public function up(): void
-    {
-        Schema::create('follows', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained();
-            $table->unsignedBigInteger('followeduser');
-            $table->foreign('followeduser')->references('id')->on('users');
-            $table->timestamps();
-        });
+step 2: Modify migration file:
+            public function up(): void
+                {
+                    Schema::create('follows', function (Blueprint $table) {
+                        $table->id();
+                        $table->foreignId('user_id')->constrained();
+                        //The next 2 lines does same thing as this previous line. Its another way of creating a foregin key reference.
+                        $table->unsignedBigInteger('followeduser');   
+                        $table->foreign('followeduser')->references('id')->on('users');
+                        $table->timestamps();
+                    });
+                }
+            
+                /**
+            
+            
+                 * Reverse the migrations.
+                 */
+                public function down(): void
+                {
+                    Schema::dropIfExists('follows');
+                }
+Step 3: Run Migration: 
+        CLI: php artisan migrate file:xxxxxxx
+Step 4:    Modify route files:
+        use App\Http\Controllers\FollowController;
+
+        // Follow related routes
+        Route::post('/create-follow/{user:username}', [FollowController::class, 'createFollow'])->middleware('auth');
+        Route::post('/remove-follow/{user:username}', [FollowController::class, 'removeFollow'])->middleware('auth');
+
+Step 5: Create Model: php artisan make"model Follow
+
+Step 6: create and Modify Controller
+    CLI: php artisan make:controller FollowController
+        use App\Models\User;
+        use App\Models\Follow;
+        public function createFollow(User $user) {
+        // you cannot follow yourself
+        if ($user->id == auth()->user()->id) {
+            return back()->with('failure', 'You cannot follow yourself.');
+        }
+
+        // you cannot follow someone you're already following
+        $existCheck = Follow::where([['user_id', '=', auth()->user()->id], ['followeduser', '=', $user->id]])->count();
+
+        if ($existCheck) {
+            return back()->with('failure', 'You are already following that user.');
+        }
+        // The code below is an alternate way to create a record in the database. same as Follow::create();
+        $newFollow = new Follow;
+        $newFollow->user_id = auth()->user()->id;
+        $newFollow->followeduser = $user->id;
+        $newFollow->save();
+
+        return back()->with('success', 'User successfully followed.');
     }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('follows');
+    public function removeFollow() {
+
     }
+            
