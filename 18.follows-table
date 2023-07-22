@@ -1,1 +1,20 @@
+CLI:  php artisan make:migration create_follows_table
 
+public function up(): void
+    {
+        Schema::create('follows', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained();
+            $table->unsignedBigInteger('followeduser');
+            $table->foreign('followeduser')->references('id')->on('users');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('follows');
+    }
