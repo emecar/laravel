@@ -1,1 +1,51 @@
+Objective: Setup button to show follows button only if the blog writter has not been followed. else show stop follows.
 
+Step 1: User controller profile function:
+
+    use App\Models\Follow;
+     public function profile(User $user) {
+            $currentlyFollowing = 0;
+    
+            if (auth()->check()) {
+                $currentlyFollowing = Follow::where([['user_id', '=', auth()->user()->id], ['followeduser', '=', $user->id]])->count();
+            }
+    
+            return view('profile-posts', ['currentlyFollowing' => $currentlyFollowing, 'avatar' => $user->avatar, 'username' => $user->username, 'posts' => $user->posts()->latest()->get(), 'postCount' => $user->posts()->count()]);
+        }
+Step 2: Modify profile-posts.blade.php
+
+      <x-layout>
+          <h2>
+            <img class="avatar-small" src="{{$avatar}}" /> {{$username}}
+            @auth
+            @if(!$currentlyFollowing AND auth()->user()->username != $username)
+            <form class="ml-2 d-inline" action="/create-follow/{{$username}}" method="POST">
+              @csrf
+              <button class="btn btn-primary btn-sm">Follow <i class="fas fa-user-plus"></i></button>
+            </form>
+            @endif
+    
+            @if($currentlyFollowing)
+            <form class="ml-2 d-inline" action="/remove-follow/{{$username}}" method="POST">
+              @csrf          
+              <button class="btn btn-danger btn-sm">Stop Following <i class="fas fa-user-times"></i></button>
+            </form>
+            @endif
+    
+            @if(auth()->user()->username == $username)
+              <a href="/manage-avatar" class="btn btn-secondary btn-sm">Manage Avatar</a>
+              @endif
+            @endauth
+          </h2>
+    </x-layout>
+
+Step 3: Test
+
+Step 4: Activate the stope following button
+
+Go to FollowController:
+    
+    public function removeFollow(User $user) {
+        Follow::where([['user_id', '=', auth()->user()->id], ['followeduser', '=', $user->id]])->delete();
+        return back()->with('success', 'User succesfully unfollowed.');
+    }
