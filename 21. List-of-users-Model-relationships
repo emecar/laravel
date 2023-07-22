@@ -1,1 +1,72 @@
 
+Step 1: Modify User Model:
+
+     public function followers() {
+        return $this->hasMany(Follow::class, 'followeduser');
+    }
+
+    public function followingTheseUsers() {
+        return $this->hasMany(Follow::class, 'user_id');
+    }
+
+Step 2: Modify Follows Model:
+
+ 
+        class Follow extends Model
+        {
+            use HasFactory;
+        
+            public function userDoingTheFollowing() {
+                return $this->belongsTo(User::class, 'user_id');
+            }
+        
+            public function userBeingFollowed() {
+                return $this->belongsTo(User::class, 'followeduser');
+            }
+        
+        }
+
+Step 3: Modify Controllers
+     public function profileFollowers(User $user) {
+        $this->getSharedData($user);
+        //return $user->followers()->latest()->get();
+        return view('profile-followers', ['followers' => $user->followers()->latest()->get()]);
+    }
+
+    public function profileFollowing(User $user) {
+        $this->getSharedData($user);
+        return view('profile-following', ['following' => $user->followingTheseUsers()->latest()->get()]);
+    }
+Step 4: Modify view pages to list the correct followers data
+view/profile-followers.blade.php
+=========
+  
+    <x-profile :sharedData="$sharedData">
+      <div class="list-group">
+            @foreach($followers as $follow)
+            <a href="/profile/{{$follow->userDoingTheFollowing->username}}" class="list-group-item list-group-item-action">
+              <img class="avatar-tiny" src="{{$follow->userDoingTheFollowing->avatar}}" />
+              {{$follow->userDoingTheFollowing->username}}
+            </a>
+            @endforeach
+          </div>
+    </x-profile>
+view/profile-following.blade.php
+=========
+      <x-profile :sharedData="$sharedData">
+        <div class="list-group">
+              @foreach($following as $follow)
+              <a href="/profile/{{$follow->userBeingFollowed->username}}" class="list-group-item list-group-item-action">
+                <img class="avatar-tiny" src="{{$follow->userBeingFollowed->avatar}}" />
+                {{$follow->userBeingFollowed->username}}
+              </a>
+              @endforeach
+            </div>
+      </x-profile>
+
+Step 5: Make the count numbers on the followers and following tabs come to life.
+UserController:
+      private function getSharedData($user) {
+             <!Output Ommitted>
+              View::share('sharedData', ['currentlyFollowing' => $currentlyFollowing, 'avatar' => $user->avatar, 'username' => $user->username, 'postCount' => $user->posts()->count(), 'followerCount' => $user->followers()->count(), 'followingCount' => $user->followingTheseUsers()->count()]);
+          }
