@@ -1,1 +1,1 @@
-
+php artisan make:model Category -m  //creates both the model and the migration file
