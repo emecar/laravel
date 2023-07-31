@@ -1,1 +1,21 @@
 php artisan make:model Category -m  //creates both the model and the migration file
+
+Working with thinker
+====================
+// Method 1 to create a DB entry
+php artisan tinker
+use App\Models\Category
+
+$c = new Category
+$c->name = 'Personal';
+$c->slug = 'personal';
+$c->save();
+
+// Method 2 to create a DB entry
+
+use App\Models\Post;
+Post::create(['title'=> 'My Family Post', 'excerpt' => 'Excerpt for my post', 'body'=>'Lorem ipsum dolar sit met', 'slug'=>'my-amily-post', 'category_id'=>'1'])
+
+
+
+
