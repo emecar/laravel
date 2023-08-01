@@ -16,6 +16,20 @@ $c->save();
 use App\Models\Post;
 Post::create(['title'=> 'My Family Post', 'excerpt' => 'Excerpt for my post', 'body'=>'Lorem ipsum dolar sit met', 'slug'=>'my-amily-post', 'category_id'=>'1'])
 
+Class Post extends Model
+{
+  use HasFactory;
+  public function category()
+      {
+        return $this->belongsTo(Category::class);
+      }
+}
 
+$post->category->name
 
+//Finding posts
+Post::all()
+Post::count
+$post = Post::first()
+$post = Post::findorFail(1)
 
