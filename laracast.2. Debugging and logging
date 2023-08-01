@@ -1,1 +1,11 @@
+//Method 1
+\Illuminate\Support\Facades\DB::listen(function ($query){
+        logger($query->sql);
+      });
+
+
+// Method 2
+
+ - CLI composer require itsgoingd/clockwork
+
 
